@@ -1,0 +1,24 @@
+name: 'Install Podman on Windows'
+description: 'This action downloads and installs the latest Podman setup.exe release for Windows.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Get Latest Podman Release'
+      run: |
+        $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/containers/podman/releases/latest"
+        $exeAsset = $latestRelease.assets | Where-Object { $_.name -like '*setup.exe' }
+        $exeUrl = $exeAsset.browser_download_url
+        Write-Output "Downloading from $exeUrl"
+        Invoke-WebRequest -Uri $exeUrl -OutFile podman-setup.exe
+      shell: pwsh
+
+    - name: 'Install Podman'
+      run: |
+        Start-Process -FilePath "podman-setup.exe" -ArgumentList "/silent" -NoNewWindow -Wait
+      shell: pwsh
+
+    - name: 'Clean Up'
+      run: |
+        Remove-Item -Path "podman-setup.exe" -Force
+      shell: pwsh

@@ -18,6 +18,11 @@ runs:
         Start-Process -FilePath "podman-setup.exe" -ArgumentList "/silent" -NoNewWindow -Wait
       shell: pwsh
 
+    - name: 'Export path'
+      run: |
+        "C:\Program Files\RedHat\Podman" >> $env:GITHUB_PATH
+      shell: pwsh
+
     - name: 'Clean Up'
       run: |
         Remove-Item -Path "podman-setup.exe" -Force
